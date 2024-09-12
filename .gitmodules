@@ -1,0 +1,3 @@
+[submodule "modules/r-common"]
+	path = modules/r-common
+	url = https://github.com/thereclaimer/RCommon
