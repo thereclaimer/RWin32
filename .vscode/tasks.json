@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+		{
+			"label": "Build RWin32 Debug",
+			"command": "r-win32-build-x64.bat",
+			"options": {
+				"cwd": "${workspaceFolder}/scripts"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+			}
+		}
+	]
+}
