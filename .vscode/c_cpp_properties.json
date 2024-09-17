@@ -3,9 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/**/modules/r-common"
-
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",
