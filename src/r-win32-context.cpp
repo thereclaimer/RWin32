@@ -2,9 +2,9 @@
 
 #include "r-win32-internal.hpp"
 
-const r_b8
+r_external const r_b8
 r_win32::context_create(
-    r_void) {
+    RWin32MainArgs& r_win32_args) {
 
     r_b8 result = true;
 
@@ -24,7 +24,7 @@ r_win32::context_create(
     return(result);
 }
 
-const r_b8 
+r_external const r_b8 
 r_win32::context_destroy(
     r_void) {
 

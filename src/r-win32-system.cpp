@@ -24,7 +24,7 @@ r_win32::system_frequency(
 
     const r_u64 frequency = win32_large_int.QuadPart;
 
-    return(frequency)
+    return(frequency);
 }
 
 r_external const r_u64 

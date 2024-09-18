@@ -7,8 +7,8 @@
 
 namespace r_win32 {
 
-    const r_b8 context_create  (RWin32MainArgs& r_win32_args);
-    const r_b8 context_destroy (r_void);
+    r_external const r_b8 context_create  (RWin32MainArgs& r_win32_args);
+    r_external const r_b8 context_destroy (r_void);
 };
 
 

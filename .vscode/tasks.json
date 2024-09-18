@@ -13,6 +13,19 @@
 			"group": {
 				"kind": "build",
 			}
+		},
+		{
+			"label": "Build RWin32 Test",
+			"command": "r-win32-test-build-x64.bat",
+			"options": {
+				"cwd": "${workspaceFolder}/scripts"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+			}
 		}
 	]
 }

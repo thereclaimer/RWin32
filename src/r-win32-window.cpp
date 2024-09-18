@@ -153,6 +153,9 @@ r_external const r_b8
 r_win32::window_frame_render(
     r_void) {
 
+    //swap the buffers
+    const HDC device_context = r_win32_internal::window_get_device_context_handle();
+
     //set the frame render ticks
     const r_u64 ticks_frame_render = r_win32::system_ticks();
     r_win32_internal::window_set_frame_system_ticks_render(ticks_frame_render);
@@ -182,6 +185,64 @@ r_win32::window_frame_delta_time_ms(
 /* INTERNAL                                                                       */
 /**********************************************************************************/
 
+r_internal LRESULT 
+r_win32_internal::window_on_wm_size(
+    WPARAM w_param, 
+    LPARAM l_param) {
+
+    const r_u32 width  = LOWORD(l_param);
+    const r_u32 height = HIWORD(l_param);
+
+    r_win32_internal::window_set_width(width);
+    r_win32_internal::window_set_height(height);
+
+    return(S_OK);
+}
+
+r_internal LRESULT 
+r_win32_internal::window_on_wm_quit(
+    WPARAM w_param, 
+    LPARAM l_param) {
+
+    r_win32_internal::window_set_quit_received(true);
+
+    return(S_OK);
+}
+
+r_internal LRESULT 
+r_win32_internal::window_on_wm_close(
+    WPARAM w_param, 
+    LPARAM l_param) {
+
+    PostQuitMessage(0);
+
+    return(S_OK);
+}
+
+r_internal LRESULT 
+r_win32_internal::window_on_wm_destroy(
+    WPARAM w_param, 
+    LPARAM l_param) {
+
+    PostQuitMessage(0);
+    
+    return(S_OK);
+}
+
+r_internal LRESULT 
+r_win32_internal::window_on_wm_move(
+    WPARAM w_param, 
+    LPARAM l_param) {
+
+    const r_u32 position_x = LOWORD(l_param);
+    const r_u32 position_y = HIWORD(l_param);
+
+    r_win32_internal::window_set_position_x(position_x);
+    r_win32_internal::window_set_position_y(position_y);
+
+    return(S_OK);
+}
+
 r_internal LRESULT CALLBACK
 r_win32_internal::window_callback(
     HWND   window_handle,
@@ -189,5 +250,25 @@ r_win32_internal::window_callback(
     WPARAM w_param,
     LPARAM l_param) {
 
-    return(1);
+    r_win32_funcptr_window_on_wm_message wm_message_handler = NULL;
+
+    switch (message) {
+
+        case WM_SIZE:    wm_message_handler = window_on_wm_size;    break; 
+        case WM_MOVE:    wm_message_handler = window_on_wm_move;    break; 
+        case WM_QUIT:    wm_message_handler = window_on_wm_quit;    break; 
+        case WM_CLOSE:   wm_message_handler = window_on_wm_close;   break; 
+        case WM_DESTROY: wm_message_handler = window_on_wm_destroy; break; 
+    }
+
+    LRESULT wm_message_result =
+        wm_message_handler
+            ? wm_message_handler(w_param,l_param)
+            : DefWindowProc(
+                window_handle,
+                message,
+                w_param,
+                l_param);
+
+    return(wm_message_result);
 }

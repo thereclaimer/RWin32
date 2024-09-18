@@ -37,6 +37,11 @@ struct RWin32RenderingContext {
 /* WINDOW                                                                         */
 /**********************************************************************************/
 
+typedef LRESULT
+(*r_win32_funcptr_window_on_wm_message)(
+    WPARAM w_param,
+    LPARAM l_param);
+
 struct RWin32Window {
     HWND                   win32_handle_window;
     HDC                    win32_handle_device_context;
@@ -61,6 +66,11 @@ namespace r_win32_internal {
         WPARAM w_param,
         LPARAM l_param);
 
+    r_internal LRESULT window_on_wm_size    (WPARAM w_param, LPARAM l_param);
+    r_internal LRESULT window_on_wm_move    (WPARAM w_param, LPARAM l_param);
+    r_internal LRESULT window_on_wm_quit    (WPARAM w_param, LPARAM l_param);
+    r_internal LRESULT window_on_wm_close   (WPARAM w_param, LPARAM l_param);
+    r_internal LRESULT window_on_wm_destroy (WPARAM w_param, LPARAM l_param);
 };
 
 /**********************************************************************************/
@@ -78,8 +88,6 @@ namespace r_win32_internal {
 
     r_internal const r_b8 memory_create  (r_void);
     r_internal const r_b8 memory_destroy (r_void);
-    
-
 };
 
 /**********************************************************************************/
@@ -91,7 +99,7 @@ namespace r_win32_internal {
 struct RWin32File {
     HANDLE               win32_handle;
     r_size               file_size;
-    RWin32FilePermission permission    
+    RWin32FilePermission permission;
 };
 
 struct RWin32FileManager {
@@ -115,7 +123,10 @@ r_global RWin32Context _r_win32_context;
 
 namespace r_win32_internal {
 
-    //context
+    //---------------------------
+    // context
+    //---------------------------
+
     inline const r_b8 context_is_initialized(r_void) { return(_r_win32_context.system_time_initialized > 0); } 
     
     inline const r_timems           context_get_system_time_initialized (r_void) { return(_r_win32_context.system_time_initialized); }
@@ -123,20 +134,29 @@ namespace r_win32_internal {
     inline       RWin32MainArgs&    context_get_args                    (r_void) { return(_r_win32_context.args);                    } 
     inline       RWin32Window&      context_get_window                  (r_void) { return(_r_win32_context.window);                  }
     inline       RWin32FileManager& context_get_file_manager            (r_void) { return(_r_win32_context.file_manager);            }
-
-    //args
+    
+    //---------------------------
+    // args
+    //---------------------------
+    
     inline const HINSTANCE main_args_get_h_instance      (r_void) { return(_r_win32_context.args.h_instance);      }
     inline const HINSTANCE main_args_get_h_prev_instance (r_void) { return(_r_win32_context.args.h_prev_instance); }
     inline const PWSTR     main_args_get_p_cmd_line      (r_void) { return(_r_win32_context.args.p_cmd_line);      }
     inline const int       main_args_get_n_cmd_show      (r_void) { return(_r_win32_context.args.n_cmd_show);      }    
 
-    //memory
+    //---------------------------
+    // memory
+    //---------------------------
+
     inline const r_size memory_get_page_size              (r_void) { return(_r_win32_context.memory.page_size);              }
     inline const r_size memory_get_page_size_large        (r_void) { return(_r_win32_context.memory.page_size_large);        }
     inline const r_size memory_get_allocation_granularity (r_void) { return(_r_win32_context.memory.allocation_granularity); }
     inline const r_size memory_get_large_pages_enabled    (r_void) { return(_r_win32_context.memory.large_pages_enabled);    }
 
-    //window
+    //---------------------------
+    // window
+    //---------------------------
+
     inline const r_b8
     window_initialized() {
 
@@ -169,7 +189,10 @@ namespace r_win32_internal {
     inline r_void window_set_frame_system_ticks_start  (const r_u64 ticks_start)         { _r_win32_context.window.frame_system_ticks_start  = ticks_start;   }    
     inline r_void window_set_frame_system_ticks_render (const r_u64 ticks_render)        { _r_win32_context.window.frame_system_ticks_render = ticks_render;  }
 
-    //file
+    //---------------------------
+    // file
+    //---------------------------
+
     inline const r_size      file_manager_get_file_count(r_void) { return(_r_win32_context.file_manager.file_count); }
     inline       RWin32File* file_manager_get_file_array(r_void) { return(_r_win32_context.file_manager.file_array); }
 };
