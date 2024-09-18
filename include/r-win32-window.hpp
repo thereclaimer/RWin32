@@ -7,10 +7,10 @@
 #include "r-win32-rendering.hpp"
 
 struct RWin32WindowDimensions {
-    const r_u32 position_x;
-    const r_u32 position_y;
-    const r_u32 width;
-    const r_u32 height;    
+    r_u32 position_x;
+    r_u32 position_y;
+    r_u32 width;
+    r_u32 height;    
 };
 
 enum RWin32WindowUseImGui_ {
