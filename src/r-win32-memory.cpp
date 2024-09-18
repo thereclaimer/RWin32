@@ -179,7 +179,7 @@ r_internal const r_b8
 r_win32_internal::memory_create(
     r_void) {
 
-    RWin32Memory& memory = r_win32_internal::context_memory();
+    RWin32Memory& memory = r_win32_internal::context_get_memory();
 
     SYSTEM_INFO system_info;
     GetSystemInfo(&system_info);

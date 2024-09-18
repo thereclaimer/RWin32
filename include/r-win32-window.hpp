@@ -42,14 +42,14 @@ namespace r_win32 {
         const RColorFormat               color_format,
         const RWin32WindowUseImGui       use_imgui);
 
-    r_external const r_b8 window_show(r_b8);
-    r_external const r_b8 window_hide(r_b8);
+    r_external const r_b8 window_show(r_void);
+    r_external const r_b8 window_hide(r_void);
 
-    r_external r_void window_dimensions(RWin32WindowDimensions& dimensions);
+    r_external r_b8 window_dimensions(RWin32WindowDimensions& dimensions);
     
-    r_external const r_b8  window_frame_start      (r_void);
-    r_external const r_b8  window_frame_render     (r_void);
-    r_external const r_u64 window_frame_delta_time (r_void);
+    r_external const r_b8     window_frame_start         (r_void);
+    r_external const r_b8     window_frame_render        (r_void);
+    r_external const r_timems window_frame_delta_time_ms (r_void);
 };
 
 #endif //R_WIN32_WINDOW_HPP
