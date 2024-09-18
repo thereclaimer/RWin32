@@ -1,37 +1,59 @@
+::----------------------------------------------------------------
+:: START
+::----------------------------------------------------------------
+
 @echo off
 
 pushd ..
 
-@set r_win32_bin_dir= bin_x64_debug
+::----------------------------------------------------------------
+:: VARIABLES
+::----------------------------------------------------------------
 
-if not exist %r_win32_bin_dir% (
-    mkdir %r_win32_bin_dir%
+@set path_bin_r_win32=      bin\debug-x64
+@set path_include_r_common= modules\r-common\include
+
+if not exist %path_bin_r_win32% (
+    mkdir %path_bin_r_win32%
 )
 
 
-@set cl_flags=        /MD                              ^
-                      /Zi                              ^
-                      /Fd:%r_win32_bin_dir%\RWin32.pdb ^
-                      /Fo:%r_win32_bin_dir%\RWin32.obj
+::----------------------------------------------------------------
+:: ARGUMENTS
+::----------------------------------------------------------------
 
-@set cl_includes=     /I src                      ^
-                      /I internal                 ^
-                      /I include                  ^
-                      /I modules\r-common\include
+@set cl_flags=        /c ^
+                      /Zi
 
-@set cl_source=       /c src\r-win32.cpp
+@set cl_output=       /Fo:%path_bin_r_win32%\RWin32.obj ^
+                      /Fd:%path_bin_r_win32%\RWin32.pdb
 
-@set cl_linker=       /link
 
-@set cl_libs=         user32.lib
+@set cl_includes=     /I src                ^
+                      /I include            ^
+                      /I internal           ^
+                      /I %path_include_r_common%
 
-call cl.exe           ^
-    %cl_flags%        ^
-    %cl_includes%     ^
-    %cl_source%       ^
-    %cl_linker%       ^
-    %cl_libs%
+@set cl_source=       src\r-win32.cpp
 
-call lib.exe /out:bin_x64_debug\RWin32.lib bin_x64_debug\RWin32.obj 
+::----------------------------------------------------------------
+:: COMPILE
+::----------------------------------------------------------------
+
+call cl.exe       ^
+    %cl_flags%    ^
+    %cl_output%   ^
+    %cl_includes% ^
+    %cl_source%
+
+::----------------------------------------------------------------
+:: LINK
+::----------------------------------------------------------------
+
+call lib.exe /out:bin\debug-x64\RWin32.lib bin\debug-x64\RWin32.obj
+
+::----------------------------------------------------------------
+:: END
+::----------------------------------------------------------------
 
 popd
