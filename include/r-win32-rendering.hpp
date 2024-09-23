@@ -11,4 +11,32 @@ enum RWin32RenderingContextType_ {
 
 typedef r_u32 RWin32RenderingContextType;
 
+
+struct RWin32RenderingViewport {
+    r_u32 position_x;
+    r_u32 position_y;
+    r_u32 width;
+    r_u32 height;
+};
+
+struct RWin32RenderingContextOpenGL {
+    HDC   device_context;
+    HGLRC gl_rendering_context;
+};
+
+struct RWin32RenderingContextDX3D {
+    //TODO
+
+};
+
+struct RWin32RenderingContext {
+    RWin32RenderingContextType type;
+    RWin32RenderingViewport    viewport;
+    union {
+        RWin32RenderingContextOpenGL opengl;
+        RWin32RenderingContextDX3D   dx3d;
+    };
+};
+
+
 #endif //R_WIN32_RENDERING_HPP

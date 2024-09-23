@@ -1,6 +1,6 @@
 #pragma once
 
-#include "r-win32-internal.hpp"
+#include "r-win32-internal-context.hpp"
 
 /**********************************************************************************/
 /* EXTERNAL                                                                       */
@@ -141,6 +141,10 @@ r_win32::window_frame_start(
     while(PeekMessage(&window_message,0,0,0,PM_REMOVE)) {
         TranslateMessage(&window_message);
         DispatchMessage(&window_message);
+
+        if (window_message.message == WM_QUIT) {
+            r_win32_internal::window_set_quit_received(true);
+        }
     }
     
     //check if we received a quit event
@@ -160,7 +164,10 @@ r_win32::window_frame_render(
     const r_u64 ticks_frame_render = r_win32::system_ticks();
     r_win32_internal::window_set_frame_system_ticks_render(ticks_frame_render);
 
-    return(true);
+    //check to see if we have a quit event
+    const r_b8 quit_received = r_win32_internal::window_get_quit_received();
+
+    return(quit_received ? false : true);
 }
 
 r_external const r_timems
@@ -210,16 +217,6 @@ r_win32_internal::window_on_wm_quit(
 }
 
 r_internal LRESULT 
-r_win32_internal::window_on_wm_close(
-    WPARAM w_param, 
-    LPARAM l_param) {
-
-    PostQuitMessage(0);
-
-    return(S_OK);
-}
-
-r_internal LRESULT 
 r_win32_internal::window_on_wm_destroy(
     WPARAM w_param, 
     LPARAM l_param) {
@@ -257,7 +254,6 @@ r_win32_internal::window_callback(
         case WM_SIZE:    wm_message_handler = window_on_wm_size;    break; 
         case WM_MOVE:    wm_message_handler = window_on_wm_move;    break; 
         case WM_QUIT:    wm_message_handler = window_on_wm_quit;    break; 
-        case WM_CLOSE:   wm_message_handler = window_on_wm_close;   break; 
         case WM_DESTROY: wm_message_handler = window_on_wm_destroy; break; 
     }
 

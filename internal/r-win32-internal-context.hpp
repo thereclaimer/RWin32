@@ -2,114 +2,12 @@
 #define R_WIN32_INTERNAL_HPP
 
 #include "r-win32.hpp"
+#include "r-win32-internal-window.hpp"
+#include "r-win32-internal-rendering.hpp"
+#include "r-win32-internal-file.hpp"
+#include "r-win32-internal-memory.hpp"
 
-/**********************************************************************************/
-/* RENDERING                                                                      */
-/**********************************************************************************/
-
-struct RWin32RenderingViewport {
-    r_u32 position_x;
-    r_u32 position_y;
-    r_u32 width;
-    r_u32 height;
-};
-
-struct RWin32RenderingContextOpenGL {
-    HDC                     device_context;
-    HGLRC                   gl_rendering_context;
-};
-
-struct RWin32RenderingContextDX3D {
-    //TODO
-
-};
-
-struct RWin32RenderingContext {
-    RWin32RenderingContextType type;
-    RWin32RenderingViewport    viewport;
-    union {
-        RWin32RenderingContextOpenGL opengl;
-        RWin32RenderingContextDX3D   dx3d;
-    };
-};
-
-/**********************************************************************************/
-/* WINDOW                                                                         */
-/**********************************************************************************/
-
-typedef LRESULT
-(*r_win32_funcptr_window_on_wm_message)(
-    WPARAM w_param,
-    LPARAM l_param);
-
-struct RWin32Window {
-    HWND                   win32_handle_window;
-    HDC                    win32_handle_device_context;
-    MSG                    message;
-    r_u32                  position_x;
-    r_u32                  position_y;
-    r_u32                  width;
-    r_u32                  height;
-    r_b32                  quit_received;
-    RColorFormat           color_format;
-    r_u64                  frame_system_ticks_start;
-    r_u64                  frame_system_ticks_render;
-    RWin32RenderingContext rendering_context;
-};
-
-namespace r_win32_internal {
-
-    r_internal LRESULT CALLBACK
-    window_callback(
-        HWND   window_handle,
-        UINT   message,
-        WPARAM w_param,
-        LPARAM l_param);
-
-    r_internal LRESULT window_on_wm_size    (WPARAM w_param, LPARAM l_param);
-    r_internal LRESULT window_on_wm_move    (WPARAM w_param, LPARAM l_param);
-    r_internal LRESULT window_on_wm_quit    (WPARAM w_param, LPARAM l_param);
-    r_internal LRESULT window_on_wm_close   (WPARAM w_param, LPARAM l_param);
-    r_internal LRESULT window_on_wm_destroy (WPARAM w_param, LPARAM l_param);
-};
-
-/**********************************************************************************/
-/* MEMORY                                                                         */
-/**********************************************************************************/
-
-struct RWin32Memory {
-    r_size page_size;
-    r_size page_size_large;
-    r_size allocation_granularity;
-    r_b32  large_pages_enabled;
-};
-
-namespace r_win32_internal {
-
-    r_internal const r_b8 memory_create  (r_void);
-    r_internal const r_b8 memory_destroy (r_void);
-};
-
-/**********************************************************************************/
-/* FILE                                                                           */
-/**********************************************************************************/
-
-#define R_WIN32_FILE_MANAGER_MAX_FILES 64
-
-struct RWin32File {
-    HANDLE               win32_handle;
-    r_size               file_size;
-    RWin32FilePermission permission;
-};
-
-struct RWin32FileManager {
-    r_size     file_count;
-    RWin32File file_array[R_WIN32_FILE_MANAGER_MAX_FILES];
-};
-
-/**********************************************************************************/
-/* CONTEXT                                                                        */
-/**********************************************************************************/
+struct RWin32Window;
 
 struct RWin32Context {
     r_timems          system_time_initialized;
