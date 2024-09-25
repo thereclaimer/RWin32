@@ -7,11 +7,18 @@
 #include "r-win32-internal-file.hpp"
 #include "r-win32-internal-system.hpp"
 
+struct RWin32ContextStack {
+    r_memory  start;
+    r_size    size;
+    r_address position;
+};
+
 struct RWin32Context {
-    RWin32SystemInfo  system_info;
-    RWin32MainArgs    args;
-    RWin32Window      window;
-    RWin32FileManager file_manager;     
+    RWin32ContextStack stack;
+    RWin32SystemInfo   system_info;
+    RWin32MainArgs     args;
+    RWin32Window       window;
+    RWin32FileTable    file_table;     
 };
 
 r_global RWin32Context _r_win32_context;
@@ -24,11 +31,15 @@ namespace r_win32_internal {
 
     inline const r_b8 context_is_initialized(r_void) { return(_r_win32_context.system_info.time_initialized > 0); } 
     
-    inline       RWin32SystemInfo&  context_get_system_info             (r_void) { return(_r_win32_context.system_info);             }
-    inline       RWin32MainArgs&    context_get_args                    (r_void) { return(_r_win32_context.args);                    } 
-    inline       RWin32Window&      context_get_window                  (r_void) { return(_r_win32_context.window);                  }
-    inline       RWin32FileManager& context_get_file_manager            (r_void) { return(_r_win32_context.file_manager);            }
+    inline       RWin32SystemInfo&  context_get_system_info (r_void) { return(_r_win32_context.system_info);             }
+    inline       RWin32MainArgs&    context_get_args        (r_void) { return(_r_win32_context.args);                    } 
+    inline       RWin32Window&      context_get_window      (r_void) { return(_r_win32_context.window);                  }
+    inline       RWin32FileTable&   context_get_file_table  (r_void) { return(_r_win32_context.file_table);            }
     
+    r_internal const r_b8     context_stack_can_push     (const r_size size);
+    r_internal       r_memory context_stack_push         (const r_size size);
+    r_internal       r_memory context_stack_push_aligned (const r_size size, const r_size alignment);
+
     //---------------------------
     // args
     //---------------------------
@@ -78,8 +89,6 @@ namespace r_win32_internal {
     // file
     //---------------------------
 
-    inline const r_size      file_manager_get_file_count(r_void) { return(_r_win32_context.file_manager.file_count); }
-    inline       RWin32File* file_manager_get_file_array(r_void) { return(_r_win32_context.file_manager.file_array); }
 };
 
 #endif //R_WIN32_INTERNAL_HPP
