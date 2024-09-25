@@ -25,6 +25,18 @@ r_win32_main(
         return(S_FALSE);
     }
 
+    //create the opengl context
+    if (!r_win32::rendering_create_opengl_context()) {
+        return(S_FALSE);
+    }
+
+    //set the clear color
+    RColor32Bit color_32 = {0};
+    color_32.format = RColorFormat_RGBA;
+    color_32.hex    = 0x282828FF;
+    r_win32::rendering_set_clear_color(color_32);
+
+    //show the window
     r_win32::window_show();
 
     //main window loop
@@ -34,6 +46,10 @@ r_win32_main(
         //start a new frame
         running &= r_win32::window_frame_start();
         
+        //-----------------------------
+        // APPLICATION LOGIC HERE!!
+        //-----------------------------
+
         //render the frame
         running &= r_win32::window_frame_render();
     }

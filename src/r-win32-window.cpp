@@ -147,6 +147,9 @@ r_win32::window_frame_start(
         }
     }
     
+    //clear the screen
+    r_win32::rendering_clear();
+
     //check if we received a quit event
     const r_b32 quit_received = r_win32_internal::window_get_quit_received();
 
@@ -159,6 +162,7 @@ r_win32::window_frame_render(
 
     //swap the buffers
     const HDC device_context = r_win32_internal::window_get_device_context_handle();
+    SwapBuffers(device_context);
 
     //set the frame render ticks
     const r_u64 ticks_frame_render = r_win32::system_ticks();
@@ -197,11 +201,20 @@ r_win32_internal::window_on_wm_size(
     WPARAM w_param, 
     LPARAM l_param) {
 
+    //get the window dimensions from the arguments
     const r_u32 width  = LOWORD(l_param);
     const r_u32 height = HIWORD(l_param);
 
+    //update the window dimensions
     r_win32_internal::window_set_width(width);
     r_win32_internal::window_set_height(height);
+
+    //update the rendering viewport
+    r_win32::rendering_update_viewport_dimensions(
+        0,
+        0,
+        width,
+        height);
 
     return(S_OK);
 }

@@ -5,14 +5,11 @@
 #include "r-win32-internal-window.hpp"
 #include "r-win32-internal-rendering.hpp"
 #include "r-win32-internal-file.hpp"
-#include "r-win32-internal-memory.hpp"
-
-struct RWin32Window;
+#include "r-win32-internal-system.hpp"
 
 struct RWin32Context {
-    r_timems          system_time_initialized;
+    RWin32SystemInfo  system_info;
     RWin32MainArgs    args;
-    RWin32Memory      memory;
     RWin32Window      window;
     RWin32FileManager file_manager;     
 };
@@ -25,10 +22,9 @@ namespace r_win32_internal {
     // context
     //---------------------------
 
-    inline const r_b8 context_is_initialized(r_void) { return(_r_win32_context.system_time_initialized > 0); } 
+    inline const r_b8 context_is_initialized(r_void) { return(_r_win32_context.system_info.time_initialized > 0); } 
     
-    inline const r_timems           context_get_system_time_initialized (r_void) { return(_r_win32_context.system_time_initialized); }
-    inline       RWin32Memory&      context_get_memory                  (r_void) { return(_r_win32_context.memory);                  }
+    inline       RWin32SystemInfo&  context_get_system_info             (r_void) { return(_r_win32_context.system_info);             }
     inline       RWin32MainArgs&    context_get_args                    (r_void) { return(_r_win32_context.args);                    } 
     inline       RWin32Window&      context_get_window                  (r_void) { return(_r_win32_context.window);                  }
     inline       RWin32FileManager& context_get_file_manager            (r_void) { return(_r_win32_context.file_manager);            }
@@ -43,15 +39,6 @@ namespace r_win32_internal {
     inline const int       main_args_get_n_cmd_show      (r_void) { return(_r_win32_context.args.n_cmd_show);      }    
 
     //---------------------------
-    // memory
-    //---------------------------
-
-    inline const r_size memory_get_page_size              (r_void) { return(_r_win32_context.memory.page_size);              }
-    inline const r_size memory_get_page_size_large        (r_void) { return(_r_win32_context.memory.page_size_large);        }
-    inline const r_size memory_get_allocation_granularity (r_void) { return(_r_win32_context.memory.allocation_granularity); }
-    inline const r_size memory_get_large_pages_enabled    (r_void) { return(_r_win32_context.memory.large_pages_enabled);    }
-
-    //---------------------------
     // window
     //---------------------------
 
@@ -59,7 +46,7 @@ namespace r_win32_internal {
     window_initialized() {
 
         const r_b8 result = (
-            _r_win32_context.system_time_initialized > 0 &&
+            _r_win32_context.system_info.time_initialized > 0 &&
             _r_win32_context.window.win32_handle_window != NULL);
     
         return(result);

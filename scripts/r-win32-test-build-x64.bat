@@ -12,9 +12,19 @@ pushd ..
 
 @set path_bin_r_win32=      bin\debug-x64
 @set path_include_r_common= modules\r-common\include
+@set path_include_vcpkg=    vcpkg_installed\x64-windows\include
+@set path_libpath_vcpkg=    vcpkg_installed\x64-windows\lib
+
+::----------------------------------------------------------------
+:: DEPENDENCIES
+::----------------------------------------------------------------
 
 if not exist %path_bin_r_win32% (
     mkdir %path_bin_r_win32%
+)
+
+if not exist %path_include_vcpkg% (
+    call vcpkg install
 )
 
 ::----------------------------------------------------------------
@@ -27,21 +37,26 @@ if not exist %path_bin_r_win32% (
                       /Fo:%path_bin_r_win32%\RWin32Test.obj ^
                       /Fd:%path_bin_r_win32%\RWin32Test.pdb
 
-
-@set cl_includes=     /I src                ^
-                      /I include            ^
-                      /I internal           ^
-                      /I test               ^
-                      /I %path_include_r_common%
+@set cl_includes=     /I src                     ^
+                      /I include                 ^
+                      /I internal                ^
+                      /I test                    ^
+                      /I %path_include_r_common% ^
+                      /I %path_include_vcpkg%
 
 @set cl_source=       test\r-win32-test.cpp
 
 @set cl_link=         /link                  ^
                       /LIBPATH:bin\debug-x64 ^
-                      user32.lib             ^
-                      RWin32.lib             ^
-                      advapi32.lib           ^
-                      gdi32.lib
+                      /LIBPATH:vcpkg_installed\x64-windows\lib
+
+@set cl_libs=         RWin32.lib   ^
+                      user32.lib   ^
+                      opengl32.lib ^
+                      glew32.lib   ^
+                      gdi32.lib    ^
+                      imgui.lib    ^
+                      Xinput.lib   
 
 ::----------------------------------------------------------------
 :: COMPILE
@@ -52,7 +67,8 @@ call cl.exe       ^
     %cl_output%   ^
     %cl_includes% ^
     %cl_source%   ^
-    %cl_link%    
+    %cl_link%     ^
+    %cl_libs%
 
 ::----------------------------------------------------------------
 :: END
