@@ -13,6 +13,7 @@ namespace r_win32 {
     r_external const r_size system_page_size              (r_void);
     r_external const r_size system_page_size_large        (r_void);
     r_external const r_size system_allocation_granularity (r_void);
+    r_external const r_size system_processor_count        (r_void);
 
     r_external r_void system_sleep (const r_timems milliseconds);
 };
